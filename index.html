@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
   <title>Countdown to Tanya's Birthday 🎉</title>
   <style>
     body {
@@ -63,14 +64,28 @@
       }
     }
 
-    /* @keyframes spin {
-      0% {
-        transform: rotate(0deg);
-      }
-      100% {
-        transform: rotate(360deg);
-      }
-    } */
+    .falling-emoji {
+    position: fixed;
+    top: -50px;
+    font-size: 24px;
+    user-select: none;
+    pointer-events: none;
+    animation: fall linear;
+  }
+
+  @keyframes fall {
+    to {
+      transform: translateY(calc(100vh + 50px)) rotate(360deg);
+    }
+  }
+
+  @keyframes rotate {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+
   </style>
 </head>
 <body>
@@ -88,23 +103,67 @@
   <script>
     const birthday = new Date("February 23, 2025 00:00:00").getTime();
 
+
+    function createFallingEmoji() {
+    const emoji = document.createElement('div');
+    emoji.classList.add('falling-emoji');
+    emoji.style.left = `${Math.random() * 100}vw`;
+    
+    // Slow down the falling effect by increasing the animation duration
+    const fallDuration = Math.random() * 5 + 5; // 5-10 seconds
+    const rotateDuration = Math.random() * 3 + 2; // 2-5 seconds
+    emoji.style.animationDuration = `${fallDuration}s, ${rotateDuration}s`;
+    
+    emoji.innerHTML = ['🎈', '🎁', '🎊', '🎉', '🎂', '🥳', '🍰', '🤩', '😘', '🍭', '🍫', '❤️', '💐', '🌟', '🍾', '🥂', '🍬'][Math.floor(Math.random() * 17)];
+    document.body.appendChild(emoji);
+
+    emoji.addEventListener('animationend', () => emoji.remove());
+  }
+
+    setInterval(createFallingEmoji, 500);
+
+
+  
     const countdown = setInterval(() => {
       const now = new Date().getTime();
       const distance = birthday - now;
-
+  
       const days = Math.floor(distance / (1000 * 60 * 60 * 24));
       const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
       const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
+  
       document.getElementById("days").innerText = days;
       document.getElementById("hours").innerText = hours;
       document.getElementById("minutes").innerText = minutes;
       document.getElementById("seconds").innerText = seconds;
-
+  
       if (distance < 0) {
         clearInterval(countdown);
         document.querySelector(".container").innerHTML = "<h1>🎉 Happy Birthday, Tanya! 🎂</h1><img src='./celebrate.gif' alt='Celebrate' style='width: 40vw; height: auto; margin-top: 20px;'>";
+        
+        // Add fireworks effect
+        const duration = 15 * 1000;
+        const animationEnd = Date.now() + duration;
+        const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+  
+        function randomInRange(min, max) {
+          return Math.random() * (max - min) + min;
+        }
+  
+        const interval = setInterval(function() {
+          const timeLeft = animationEnd - Date.now();
+  
+          if (timeLeft <= 0) {
+            return clearInterval(interval);
+          }
+  
+          const particleCount = 50 * (timeLeft / duration);
+          
+          // since particles fall down, start a bit higher than random
+          confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+          confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+        }, 250);
       }
     }, 1000);
   </script>
