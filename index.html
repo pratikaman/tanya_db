@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/fireworks-js@2.x/dist/index.umd.js"></script>
   <title>Countdown to Tanya's Birthday 🎉</title>
   <style>
     body {
@@ -85,20 +86,42 @@
     }
   }
 
+  .wrapper {
+    position: relative;
+    z-index: 2;
+
+  }
+
+  .rockets {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100vw;
+    height: 50vw; /* Adjust this value to control the height of the rocket area */
+    z-index: 1;
+  }
+
 
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>🎉 Countdown to Tanya's Birthday! 🎂</h1>
-    <div class="countdown">
-      <div><span id="days">00</span><br>Days</div>
-      <div><span id="hours">00</span><br>Hours</div>
-      <div><span id="minutes">00</span><br>Minutes</div>
-      <div><span id="seconds">00</span><br>Seconds</div>
+  <div class="wrapper">
+
+    <div class="container">
+      <h1>🎉 Countdown to Tanya's Birthday! 🎂</h1>
+      <div class="countdown">
+        <div><span id="days">00</span><br>Days</div>
+        <div><span id="hours">00</span><br>Hours</div>
+        <div><span id="minutes">00</span><br>Minutes</div>
+        <div><span id="seconds">00</span><br>Seconds</div>
+      </div>
+      <!-- <div class="emoji">🎈🎁🎊</div> -->
     </div>
-    <!-- <div class="emoji">🎈🎁🎊</div> -->
+
+    <div class="rockets"></div>
+
   </div>
+
 
   <script>
     const birthday = new Date("February 23, 2025 00:00:00").getTime();
@@ -141,11 +164,15 @@
       if (distance < 0) {
         clearInterval(countdown);
         document.querySelector(".container").innerHTML = "<h1>🎉 Happy Birthday, Tanya! 🎂</h1><img src='./celebrate.gif' alt='Celebrate' style='width: 40vw; height: auto; margin-top: 20px;'>";
+
+        const container = document.querySelector('.rockets');
+        const fireworks = new Fireworks.default(container)
+        fireworks.start()
         
         // Add fireworks effect
         const duration = 15 * 1000;
         const animationEnd = Date.now() + duration;
-        const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+        const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 1 };
   
         function randomInRange(min, max) {
           return Math.random() * (max - min) + min;
